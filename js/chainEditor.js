@@ -1,7 +1,8 @@
 class Node {
-    constructor(x,y, nuclide) {
+    constructor(x,y, nuclide, id) {
         this.pos = { x : x, y : y };
         this.nuclide = nuclide;
+        this.id = id;
         // this.nuclide.setNode(this);
         this.childs = [];
 
@@ -48,6 +49,12 @@ class Node {
             var posA      = v2add(this.pos , displace);
             var posB      = v2sub(child.pos, displace);
             drawArrow(ctx, posA.x, posA.y, posB.x, posB.y, 2, "#ffffff");
+
+            var textLabel = this.getTransLabel(i);
+            var posText   = v2add(this.pos, v2scale(direction, 0.5));
+            ctx.font = "10px Arial";
+            ctx.fillStyle   = "#ffffff";
+            ctx.fillText(textLabel, posText.x, posText.y - 10);
         }
     }
 
@@ -82,8 +89,19 @@ class Node {
     }
 
     addChild(childNode){
+        // childNode.nuclide.addParent(this.nuclide, parentType.decay, decayMode.misc, 1.0);
+        childNode.nuclide.addParent(this.nuclide, parentType.decay, decayMode.alpha, 1.0);
         this.childs.push(childNode);
-        this.nuclide.addChild(childNode.nuclide);
+    }
+
+    getTransLabel(childId){
+        var parentMode = this.childs[childId].nuclide.getTransInfo(this.nodeId);
+        if(parentMode == null) return "error";
+        var percentage = parentMode.percentage;
+        if (percentage == 1)
+            return `${parentMode.decayMode} ${this.nuclide.halfLife} ${this.nuclide.halfLifeUnit}`;
+        else
+            return `${parentMode.decayMode} (${parentMode.percentage*100}%) ${this.nuclide.halfLife} ${this.nuclide.halfLifeUnit}`;
     }
 }
 
@@ -98,14 +116,16 @@ function newChild(nodes, parentNode, childNode){
 
 function newChildActive(){
     if (g_active_id < 0) return;
-    var newNode    = new Node(100,100, new Nuclide("X"));
+    var newNode    = new Node(100,100, new Nuclide("X"), g_nodeID++);
     newChild(g_nodes, g_nodes[g_active_id], newNode);
 }
 
-var nuclide0 = new Nuclide("A");
-var g_nodes = [new Node(50,50,nuclide0)];
-var g_active_id = -1;
+var g_active_id  = -1;
 var g_isDragging = false;
+var g_nodeID     = 0;
+
+var nuclide0 = new Nuclide("A");
+var g_nodes = [new Node(50,50,nuclide0, g_nodeID++)];
 
 var nuclide1 = new Nuclide("B");
 newChild(g_nodes, g_nodes[0], new Node(100,100,nuclide1));
