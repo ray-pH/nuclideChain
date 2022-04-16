@@ -39,16 +39,15 @@ class Node {
     }
 
     displayArrows(ctx){
-        if (this.childs.length > 0){
-            for (var i in this.childs){
-                var child     = this.childs[i];
-                var direction = v2sub(child.pos, this.pos);
-                var normal    = v2scale(direction, 1/v2len(direction));
-                var displace  = v2scale(normal, this.radius + 10);
-                var posA      = v2add(this.pos , displace);
-                var posB      = v2sub(child.pos, displace);
-                drawArrow(ctx, posA.x, posA.y, posB.x, posB.y, 2, "#ffffff");
-            }
+        if (this.childs.length <= 0) return;
+        for (var i in this.childs){
+            var child     = this.childs[i];
+            var direction = v2sub(child.pos, this.pos);
+            var normal    = v2scale(direction, 1/v2len(direction));
+            var displace  = v2scale(normal, this.radius + 10);
+            var posA      = v2add(this.pos , displace);
+            var posB      = v2sub(child.pos, displace);
+            drawArrow(ctx, posA.x, posA.y, posB.x, posB.y, 2, "#ffffff");
         }
     }
 
@@ -83,16 +82,20 @@ class Node {
     }
 }
 
-
+/*
+ * assuming parentNode already exist in nodes
+ * childNode will be added into nodes afterward
+ */
 function newChild(nodes, parentNode, childNode){
     nodes.push(childNode);
     parentNode.addChild(childNode);
 }
 
-/*
- * assuming parentNode already exist in nodes
- * childNode will be added into nodes afterward
- */
+function newChildActive(){
+    if (g_active_id < 0) return;
+    var newNode    = new Node(100,100, new Nuclide("X"));
+    newChild(g_nodes, g_nodes[g_active_id], newNode);
+}
 
 var nuclide0 = new Nuclide("A");
 var g_nodes = [new Node(50,50,nuclide0)];
@@ -108,3 +111,5 @@ function chainEditor_update(params){
         g_nodes[i].update(params, i);
     }
 }
+
+document.getElementById("addChildButton").onclick = newChildActive;
