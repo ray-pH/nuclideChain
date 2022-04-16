@@ -7,6 +7,7 @@ const timeUnit = {
     year   : 'yr',
 }
 
+
 const parentType = {
     decay   : 0,
     capture : 1,
@@ -24,9 +25,10 @@ const decayMode = {
 };
 
 class Nuclide {
-    constructor (name, halfLife = 1.0, transCrosssection = 0.0) {
+    constructor (name, initialCount = 0.0, halfLife = 1.0, transCrosssection = 0.0) {
         this.name   = name;
         this.abbrev = null;
+        this.initialCount = initialCount;
         this.halfLife     = halfLife;
         this.halfLifeUnit = timeUnit.second;
         this.transCrosssection = transCrosssection;
@@ -56,4 +58,15 @@ class Nuclide {
         return null;
     }
 
+    parseHalfLife(){
+        switch(this.halfLifeUnit){
+            case timeUnit.second : return this.halfLife;
+            case timeUnit.minute : return this.halfLife * 60;
+            case timeUnit.hour   : return this.halfLife * 60 * 60;
+            case timeUnit.day    : return this.halfLife * 60 * 60 * 24;
+            case timeUnit.month  : return this.halfLife * 60 * 60 * 24 * 30;
+            case timeUnit.year   : return this.halfLife * 60 * 60 * 24 * 365;
+        }
+    }
 }
+

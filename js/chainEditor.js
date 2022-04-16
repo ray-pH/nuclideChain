@@ -1,8 +1,7 @@
 class Node {
-    constructor(x,y, nuclide, id) {
+    constructor(x,y, nuclide) {
         this.pos = { x : x, y : y };
         this.nuclide = nuclide;
-        this.id = id;
         // this.nuclide.setNode(this);
         this.childs = [];
 
@@ -36,10 +35,10 @@ class Node {
         ctx.fillStyle   = "#0e0e0e";
         ctx.fillText(this.nuclide.name, this.pos.x, this.pos.y + 8);
 
-        this.displayArrows(ctx);
+        this.displayArrows(ctx, id);
     }
 
-    displayArrows(ctx){
+    displayArrows(ctx, id){
         if (this.childs.length <= 0) return;
         for (var i in this.childs){
             var child     = this.childs[i];
@@ -50,7 +49,7 @@ class Node {
             var posB      = v2sub(child.pos, displace);
             drawArrow(ctx, posA.x, posA.y, posB.x, posB.y, 2, "#ffffff");
 
-            var textLabel = this.getTransLabel(i);
+            var textLabel = this.getTransLabel(i, id);
             var posText   = v2add(this.pos, v2scale(direction, 0.5));
             ctx.font = "10px Arial";
             ctx.fillStyle   = "#ffffff";
@@ -94,8 +93,8 @@ class Node {
         this.childs.push(childNode);
     }
 
-    getTransLabel(childId){
-        var parentMode = this.childs[childId].nuclide.getTransInfo(this.nodeId);
+    getTransLabel(childId, id){
+        var parentMode = this.childs[childId].nuclide.getTransInfo(id);
         if(parentMode == null) return "error";
         var percentage = parentMode.percentage;
         if (percentage == 1)
@@ -116,23 +115,25 @@ function newChild(nodes, parentNode, childNode){
 
 function newChildActive(){
     if (g_active_id < 0) return;
-    var newNode    = new Node(100,100, new Nuclide("X"), g_nodeID++);
+    var newNode    = new Node(100,100, new Nuclide("X"));
     newChild(g_nodes, g_nodes[g_active_id], newNode);
 }
 
 var g_active_id  = -1;
 var g_isDragging = false;
-var g_nodeID     = 0;
 
-var nuclide0 = new Nuclide("A");
-var g_nodes = [new Node(50,50,nuclide0, g_nodeID++)];
+var nuclide0 = new Nuclide("A", 100);
+var g_nodes = [new Node(150,150,nuclide0)];
 
 var nuclide1 = new Nuclide("B");
-newChild(g_nodes, g_nodes[0], new Node(100,100,nuclide1));
+newChild(g_nodes, g_nodes[0], new Node(300,100,nuclide1));
 
 
 function chainEditor_update(params){
     if (params.mouseDown) g_active_id = -1;
+    for (var i in g_nodes){
+        g_nodes[i].nuclide.nodeId = i;
+    }
     for (var i in g_nodes){
         g_nodes[i].update(params, i);
     }
