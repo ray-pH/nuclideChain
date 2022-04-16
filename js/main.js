@@ -24,7 +24,7 @@ g_canvas.addEventListener("mousemove", setMouseState);
 g_canvas.addEventListener("mouseup", setMouseState);
 
 function loop() {
-    g_ctx.fillStyle = "#222222";
+    g_ctx.fillStyle = "#0e0e0e";
     g_ctx.fillRect(0, 0, g_canvas.width, g_canvas.height);
 
     var params = {

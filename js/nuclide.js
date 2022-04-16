@@ -1,6 +1,14 @@
-class nuclide {
-    constructor (name, abbrev = null) {
-        this.name = name;
-        this.abbrev = abbrev;
+class Nuclide {
+    constructor (name) {
+        this.name   = name;
+        this.abbrev = null;
+        // this.node   = null;
+        this.childs  = [];
+        this.parents = [];
     }
+
+    // setNode(node){ this.node = node; }
+    // TODO
+    addChild(childNuclide) { this.childs.push(childNuclide); }
+
 }
