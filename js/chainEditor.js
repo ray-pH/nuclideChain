@@ -55,12 +55,16 @@ class Node {
         this.isHovered = this.checkHover(params.mousePos);
         if (this.isDragged){
             g_active_id = id;
-            if (!params.mouseDown) this.isDragged = false;
+            if (!params.mouseDown) {
+                this.isDragged = false;
+                g_isDragging = false;
+            }
             return;
         }
         if (this.isHovered && params.mouseDown) {
             g_active_id = id;
             this.isDragged = true;
+            g_isDragging = true;
             this.clickOffset = v2sub(this.pos, params.mousePos);
         }
     }
@@ -72,6 +76,7 @@ class Node {
     }
 
     checkHover(mouse){
+        if (!this.isDragged && g_isDragging) return false;
         var dist2 = v2len2( v2sub(this.pos, mouse) );
         return dist2 < this.radius * this.radius;
     }
@@ -100,6 +105,7 @@ function newChildActive(){
 var nuclide0 = new Nuclide("A");
 var g_nodes = [new Node(50,50,nuclide0)];
 var g_active_id = -1;
+var g_isDragging = false;
 
 var nuclide1 = new Nuclide("B");
 newChild(g_nodes, g_nodes[0], new Node(100,100,nuclide1));
