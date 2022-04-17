@@ -2,26 +2,20 @@
 <html lang="">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#111111">
-  <title>Nuclide Chain</title>
-  <style>
-    body {
-      margin:0;
-      padding:0;
-      /* overflow: hidden; */
-    }
-    canvas {
-      margin:auto;
-    }
-  </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#111111">
+    <title>Nuclide Chain</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
     Header whatever <br>
     <button id="addChildButton">addChild</button><br>
-    <canvas id="canvas" height=400></canvas>
+    <div id=container>
+        <div id="controller">sdfsdff</div>
+        <canvas id="canvas" height=400></canvas>
+    </div><br>
     <button id="evaluateButton">eval</button><br>
     <canvas id="plotCanvas" width=400 height=400></canvas>
 </body>
@@ -31,5 +25,6 @@
 <script src="js/chainEditor.js"></script>
 <script src="js/plotter.js"></script>
 <script src="js/evaluator.js"></script>
+<script src="js/controller.js"></script>
 <script src="js/main.js"></script>
 </html>

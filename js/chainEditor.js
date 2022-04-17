@@ -128,8 +128,9 @@ function setChild(parentNode, childNode){
 
 function newChildActive(){
     if (g_active_id < 0) return;
-    var newNode    = new Node(100,100, new Nuclide("X"));
-    setChild(g_nodes[g_active_id], newNode);
+    var activeNode = g_nodes[g_active_id];
+    var newNode    = new Node(activeNode.pos.x + 100,activeNode.pos.y, new Nuclide("X"));
+    setChild(activeNode, newNode);
 }
 
 var g_active_id  = -1;
@@ -145,15 +146,9 @@ setChild(g_nodes[0], new Node(300,100,nuclide1));
 
 function chainEditor_update(params){
     if (params.mouseDown) g_active_id = -1;
-    for (var i in g_nodes){
-        g_nodes[i].nuclide.nodeId = i;
-    }
-    for (var i in g_nodes){
-        g_nodes[i].update(params, i);
-    }
-    for (var i in g_connections){
-        g_connections[i].update(params, i);
-    }
+    for (var i in g_nodes){ g_nodes[i].nuclide.nodeId = i; }
+    for (var i in g_nodes){ g_nodes[i].update(params, i); }
+    for (var i in g_connections){ g_connections[i].update(params, i); }
 }
 
 document.getElementById("addChildButton").onclick = newChildActive;

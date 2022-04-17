@@ -1,6 +1,7 @@
-var g_canvas = document.getElementById("canvas");
+var g_canvas  = document.getElementById("canvas");
+var g_ctrlDiv = document.getElementById("controller");
 var g_ctx = canvas.getContext("2d");
-g_canvas.width = window.innerWidth;
+g_canvas.width = window.innerWidth - g_ctrlDiv.clientWidth - 100;
 
 var g_mousePos = {x : 0, y : 0};
 var g_mouseDown = false;
@@ -12,7 +13,7 @@ canvas.addEventListener("mousemove", function(e) {
     }
 });
 window.addEventListener("resize", function() {
-    g_canvas.width = window.innerWidth;
+    g_canvas.width = window.innerWidth - g_ctrlDiv.clientWidth - 100;
 });
 function setMouseState(e) {
     var flags = e.buttons !== undefined ? e.buttons : e.which;
@@ -32,6 +33,7 @@ function loop() {
         mouseDown : g_mouseDown,
     }
     chainEditor_update(params);
+    updateController();
     setTimeout(loop, 10);
 }
 loop();
