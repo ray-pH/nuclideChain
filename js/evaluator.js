@@ -46,14 +46,17 @@ function gen_diff_equation_function(nodes){
 
 var g_dt = 0.1;
 var g_t0 = 0;
-var g_tend = 1;
+var g_tend = 10;
 
 function solve(){
     const fun = gen_diff_equation_function(g_nodes);
     var N0    = get_initial_value(g_nodes);
     var result = Solver.euler(fun, g_t0, g_tend, N0, g_dt);
-    plot(result.T, m_transpose(result.Y)[0]);
-    plot(result.T, m_transpose(result.Y)[1]);
+    var T = result.T;
+    var N = m_transpose(result.Y);
+    plotN(T,N);
+    // plot(result.T, m_transpose(result.Y)[0], null, null, true);
+    // plot(result.T, m_transpose(result.Y)[1]);
 }
 
 document.getElementById("evaluateButton").onclick = solve;

@@ -110,6 +110,7 @@ class Node {
  */
 function newChild(nodes, parentNode, childNode){
     nodes.push(childNode);
+    parentNode.nuclide.halfLife = 1.0;
     parentNode.addChild(childNode);
 }
 

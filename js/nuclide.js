@@ -25,7 +25,7 @@ const decayMode = {
 };
 
 class Nuclide {
-    constructor (name, initialCount = 0.0, halfLife = 1.0, transCrosssection = 0.0) {
+    constructor (name, initialCount = 0.0, halfLife = 0.0, transCrosssection = 0.0) {
         this.name   = name;
         this.abbrev = null;
         this.initialCount = initialCount;
