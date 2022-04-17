@@ -48,7 +48,7 @@ class Node {
         this.nuclide = nuclide;
         // this.nuclide.setNode(this);
         this.connections = [];
-        this.childs = [];
+        // this.childs = [];
 
         this.radius = 20;
         this.isDragged = false;
