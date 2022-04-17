@@ -36,31 +36,20 @@ function drawArrow(ctx, fromx, fromy, tox, toy, arrowWidth, color){
     ctx.restore();
 }
 
-function v2add(a,b){
-    return {
-        x : a.x + b.x,
-        y : a.y + b.y,
-    };
-}
+/*
+ * Map x linearly from [a,b] to [A,B]
+ */
+function linmap(x, a,b, A,B){ return A + ((x-a) * (B-A)/(b-a)); }
 
-function v2sub(a,b){
-    return {
-        x : a.x - b.x,
-        y : a.y - b.y,
-    };
-}
-
-function v2scale(v,s){
-    return {
-        x : s * v.x,
-        y : s * v.y,
-    };
-}
+function v2add(a,b){ return { x : a.x + b.x, y : a.y + b.y, }; }
+function v2sub(a,b){ return { x : a.x - b.x, y : a.y - b.y, }; }
+function v2scale(v,s){ return { x : s * v.x, y : s * v.y, }; }
 
 function v2len2(v){ return v.x*v.x + v.y*v.y; }
 function v2len(v) { return Math.sqrt(v2len2(v)); }
 
 function v_scale(v,s){
+    // TODO use map
     var result = new Array(v.length);
     for (var i = 0; i < v.length; i++) result[i] = v[i] * s;
     return result;
@@ -70,4 +59,22 @@ function v_add(a,b) {
     var result = new Array(a.length);
     for (var i = 0; i < a.length; i++) result[i] = a[i] + b[i];
     return result;
+}
+
+/*
+ * Transpose 2d matrix (m x n) -> (n x m)
+ */
+function m_transpose(M){
+    var m = M.length;
+    var n = M[0].length;
+    // generate empty array
+    var Mt = new Array(n);
+    for (var i = 0; i < n; i++) Mt[i] = new Array(m);
+    // fill values
+    for (var i = 0; i < m; i++){
+        for (var j = 0; j < n; j++){
+            Mt[j][i] = M[i][j];
+        }
+    }
+    return Mt;
 }

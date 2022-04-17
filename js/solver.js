@@ -19,7 +19,7 @@ const Solver = {
         //algorithm
         for (var i = 0; i < n; i++){
             T[i+1] = T[i] + h;
-            Y[i+1] = v_add(Y[i], fun(T[i],Y[i]));
+            Y[i+1] = v_add(Y[i], v_scale(fun(T[i],Y[i]),h));
         }
 
         return { T : T, Y : Y };
