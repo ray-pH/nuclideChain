@@ -1,8 +1,53 @@
+class Connection {
+    constructor(parentNode, childNode, parentMode){
+        this.parentNode = parentNode;
+        this.childNode = childNode;
+        this.parentMode = parentMode;
+    }
+
+    update(params, id){
+        this.display(params, id);
+    }
+
+    display(params, id) {
+        var ctx = params.ctx;
+        this.displayArrows(ctx, id);
+    }
+
+    displayArrows(ctx, id){
+        var child     = this.childNode;
+        var pare      = this.parentNode;
+        var direction = v2sub(child.pos, pare.pos);
+        var normal    = v2scale(direction, 1/v2len(direction));
+        var displace  = v2scale(normal, pare.radius + 10);
+        var posA      = v2add(pare.pos , displace);
+        var posB      = v2sub(child.pos, displace);
+        drawArrow(ctx, posA.x, posA.y, posB.x, posB.y, 2, "#ffffff");
+
+        var textLabel = this.getTransLabel();
+        var posText   = v2add(pare.pos, v2scale(direction, 0.5));
+        ctx.font = "10px Arial";
+        ctx.fillStyle   = "#ffffff";
+        ctx.fillText(textLabel, posText.x, posText.y - 10);
+    }
+
+    getTransLabel(){
+        var percentage = this.parentMode.percentage;
+        var parentMode = this.parentMode;
+        var parentNuclide = parentMode.nuclide;
+        if (percentage == 1)
+            return `${parentMode.decayMode} ${parentNuclide.halfLife} ${parentNuclide.halfLifeUnit}`;
+        else
+            return `${parentMode.decayMode} (${parentMode.percentage*100}%) ${parentNuclide.halfLife} ${parentNuclide.halfLifeUnit}`;
+    }
+}
+
 class Node {
     constructor(x,y, nuclide) {
         this.pos = { x : x, y : y };
         this.nuclide = nuclide;
         // this.nuclide.setNode(this);
+        this.connections = [];
         this.childs = [];
 
         this.radius = 20;
@@ -34,28 +79,8 @@ class Node {
         ctx.font = "20px Arial";
         ctx.fillStyle   = "#0e0e0e";
         ctx.fillText(this.nuclide.name, this.pos.x, this.pos.y + 8);
-
-        this.displayArrows(ctx, id);
     }
 
-    displayArrows(ctx, id){
-        if (this.childs.length <= 0) return;
-        for (var i in this.childs){
-            var child     = this.childs[i];
-            var direction = v2sub(child.pos, this.pos);
-            var normal    = v2scale(direction, 1/v2len(direction));
-            var displace  = v2scale(normal, this.radius + 10);
-            var posA      = v2add(this.pos , displace);
-            var posB      = v2sub(child.pos, displace);
-            drawArrow(ctx, posA.x, posA.y, posB.x, posB.y, 2, "#ffffff");
-
-            var textLabel = this.getTransLabel(i, id);
-            var posText   = v2add(this.pos, v2scale(direction, 0.5));
-            ctx.font = "10px Arial";
-            ctx.fillStyle   = "#ffffff";
-            ctx.fillText(textLabel, posText.x, posText.y - 10);
-        }
-    }
 
     checkDrag(params, id) {
         this.isHovered = this.checkHover(params.mousePos);
@@ -86,38 +111,25 @@ class Node {
         var dist2 = v2len2( v2sub(this.pos, mouse) );
         return dist2 < this.radius * this.radius;
     }
-
-    addChild(childNode){
-        // childNode.nuclide.addParent(this.nuclide, parentType.decay, decayMode.misc, 1.0);
-        childNode.nuclide.addParent(this.nuclide, parentType.decay, decayMode.alpha, 1.0);
-        this.childs.push(childNode);
-    }
-
-    getTransLabel(childId, id){
-        var parentMode = this.childs[childId].nuclide.getTransInfo(id);
-        if(parentMode == null) return "error";
-        var percentage = parentMode.percentage;
-        if (percentage == 1)
-            return `${parentMode.decayMode} ${this.nuclide.halfLife} ${this.nuclide.halfLifeUnit}`;
-        else
-            return `${parentMode.decayMode} (${parentMode.percentage*100}%) ${this.nuclide.halfLife} ${this.nuclide.halfLifeUnit}`;
-    }
 }
+
 
 /*
  * assuming parentNode already exist in nodes
  * childNode will be added into nodes afterward
  */
-function newChild(nodes, parentNode, childNode){
-    nodes.push(childNode);
+function setChild(parentNode, childNode){
+    g_nodes.push(childNode);
     parentNode.nuclide.halfLife = 1.0;
-    parentNode.addChild(childNode);
+    var mode = new ParentMode(parentNode.nuclide, parentType.decay, decayMode.alpha, 1.0);
+    childNode.nuclide.addParent(mode);
+    g_connections.push(new Connection(parentNode, childNode, mode));
 }
 
 function newChildActive(){
     if (g_active_id < 0) return;
     var newNode    = new Node(100,100, new Nuclide("X"));
-    newChild(g_nodes, g_nodes[g_active_id], newNode);
+    setChild(g_nodes[g_active_id], newNode);
 }
 
 var g_active_id  = -1;
@@ -125,9 +137,10 @@ var g_isDragging = false;
 
 var nuclide0 = new Nuclide("A", 100);
 var g_nodes = [new Node(150,150,nuclide0)];
+var g_connections = [];
 
 var nuclide1 = new Nuclide("B");
-newChild(g_nodes, g_nodes[0], new Node(300,100,nuclide1));
+setChild(g_nodes[0], new Node(300,100,nuclide1));
 
 
 function chainEditor_update(params){
@@ -137,6 +150,9 @@ function chainEditor_update(params){
     }
     for (var i in g_nodes){
         g_nodes[i].update(params, i);
+    }
+    for (var i in g_connections){
+        g_connections[i].update(params, i);
     }
 }
 

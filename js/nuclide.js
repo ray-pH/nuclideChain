@@ -7,7 +7,6 @@ const timeUnit = {
     year   : 'yr',
 }
 
-
 const parentType = {
     decay   : 0,
     capture : 1,
@@ -23,6 +22,15 @@ const decayMode = {
     EC      : "EC",
     SF      : "SF",
 };
+
+class ParentMode {
+    constructor(parentNuclide, parentType, decayMode, percentage){
+        this.nuclide    = parentNuclide;
+        this.parentType = parentType;
+        this.decayMode  = decayMode;
+        this.percentage = percentage;
+    }
+}
 
 class Nuclide {
     constructor (name, initialCount = 0.0, halfLife = 0.0, transCrosssection = 0.0) {
@@ -41,13 +49,10 @@ class Nuclide {
     // TODO
     // addChild(childNuclide) { this.childs.push(childNuclide); }
     setNodeId(id) { this.nodeId = id; }
-    addParent(parentNuclide, parentType, decayMode, percentage) { 
-        this.parentModes.push({
-            nuclide    : parentNuclide,
-            parentType : parentType,
-            decayMode  : decayMode,
-            percentage : percentage
-        }); 
+    // addParent(parentNuclide, parentType, decayMode, percentage) { 
+    addParent(parentMode) { 
+        this.parentModes.push(parentMode);
+        // this.parentModes.push(new ParentMode(parentNuclide, parentType, decayMode, percentage)); 
     }
     getTransInfo(parentId){
         for (var i in this.parentModes){
