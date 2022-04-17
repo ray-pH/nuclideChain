@@ -59,3 +59,15 @@ function v2scale(v,s){
 
 function v2len2(v){ return v.x*v.x + v.y*v.y; }
 function v2len(v) { return Math.sqrt(v2len2(v)); }
+
+function v_scale(v,s){
+    var result = new Array(v.length);
+    for (var i = 0; i < v.length; i++) result[i] = v[i] * s;
+    return result;
+}
+function v_add(a,b) { 
+    if (a.length != b.length) return null;
+    var result = new Array(a.length);
+    for (var i = 0; i < a.length; i++) result[i] = a[i] + b[i];
+    return result;
+}
