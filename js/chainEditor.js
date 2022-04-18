@@ -4,10 +4,17 @@ class Connection {
         this.childNode = childNode;
         this.parentMode = parentMode;
         this.size = V2(0,0);
+        this.pos  = V2(0,0);
     }
 
     update(params, id){
         this.display(params, id);
+        this.checkHover(params, id);
+    }
+
+    checkHover(params, id){
+        if (!params.mouseDown) return;
+        if (inRect(params.mousePos, this.pos, v2add(this.pos, this.size))) g_active_conn_id = id;
     }
 
     display(params, id) {
@@ -42,12 +49,12 @@ class Connection {
         var textSize  = V2(ctx.measureText(textLabel).width, 10)
         this.size     = v2add(textSize, v2scale(padSize,2));
         var halfsize  = v2scale(this.size, 0.5);
-        var cornerPos = v2add(v2sub(posText, halfsize) , V2(0, -text_dy));
+        this.pos      = v2add(v2sub(posText, halfsize) , V2(0, -text_dy));
 
         // background
-        ctx.fillStyle   = "#333333cc";
-        // ctx.fillStyle   = "#ff3333";
-        ctx.fillRect(cornerPos.x, cornerPos.y, this.size.x, this.size.y);
+        // ctx.fillStyle   = "#333333cc";
+        ctx.fillStyle = (id == g_active_conn_id) ? "#0000ff" : "#333333cc";
+        ctx.fillRect(this.pos.x, this.pos.y, this.size.x, this.size.y);
 
         ctx.fillStyle   = "#ffffff";
         ctx.fillText(textLabel, posText.x, posText.y - text_dy);
@@ -89,7 +96,7 @@ class Node {
         var ctx = params.ctx;
 
         ctx.fillStyle   = "#ffffff";
-        ctx.strokeStyle = (id == g_active_id) ? "#0000ff" : "#333333";
+        ctx.strokeStyle = (id == g_active_node_id) ? "#0000ff" : "#333333";
         ctx.lineWidth   = 5;
 
         ctx.beginPath();
@@ -109,7 +116,7 @@ class Node {
     checkDrag(params, id) {
         this.isHovered = this.checkHover(params.mousePos);
         if (this.isDragged){
-            g_active_id = id;
+            g_active_node_id = id;
             if (!params.mouseDown) {
                 this.isDragged = false;
                 g_isDragging = false;
@@ -117,7 +124,7 @@ class Node {
             return;
         }
         if (this.isHovered && params.mouseDown) {
-            g_active_id = id;
+            g_active_node_id = id;
             this.isDragged = true;
             g_isDragging = true;
             this.clickOffset = v2sub(this.pos, params.mousePos);
@@ -151,13 +158,14 @@ function setChild(parentNode, childNode){
 }
 
 function newChildActive(){
-    if (g_active_id < 0) return;
-    var activeNode = g_nodes[g_active_id];
+    if (g_active_node_id < 0) return;
+    var activeNode = g_nodes[g_active_node_id];
     var newNode    = new Node(activeNode.pos.x + 100,activeNode.pos.y, new Nuclide("X"));
     setChild(activeNode, newNode);
 }
 
-var g_active_id  = -1;
+var g_active_node_id  = -1;
+var g_active_conn_id  = -1;
 var g_isDragging = false;
 
 var nuclide0 = new Nuclide("A", 100);
@@ -169,7 +177,10 @@ setChild(g_nodes[0], new Node(300,100,nuclide1));
 
 
 function chainEditor_update(params){
-    if (params.mouseDown) g_active_id = -1;
+    if (params.mouseDown) {
+        g_active_node_id = -1;
+        g_active_conn_id = -1;
+    }
     for (var i in g_nodes){ g_nodes[i].nuclide.nodeId = i; }
     for (var i in g_nodes){ g_nodes[i].update(params, i); }
     for (var i in g_connections){ g_connections[i].update(params, i); }

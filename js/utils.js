@@ -46,6 +46,11 @@ function v2add(a,b){ return { x : a.x + b.x, y : a.y + b.y, }; }
 function v2sub(a,b){ return { x : a.x - b.x, y : a.y - b.y, }; }
 function v2mul(a,b){ return { x : a.x * b.x, y : a.y * b.y, }; }
 function v2scale(v,s){ return { x : s * v.x, y : s * v.y, }; }
+function inRect(v, p0,p1) {
+    var inX = (p0.x <= v.x) && (v.x <= p1.x);
+    var inY = (p0.y <= v.y) && (v.y <= p1.y);
+    return inX && inY;
+}
 
 function v2len2(v){ return v.x*v.x + v.y*v.y; }
 function v2len(v) { return Math.sqrt(v2len2(v)); }

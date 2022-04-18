@@ -1,15 +1,15 @@
 g_prevActiveId = null
 
 function updateController(){
-    if (g_active_id == g_prevActiveId) return;
+    if (g_active_node_id == g_prevActiveId) return;
     // active id changed
-    if (g_active_id < 0) g_ctrlDiv.innerHTML = "-1";
+    if (g_active_node_id < 0) g_ctrlDiv.innerHTML = "-1";
     else {
-        g_ctrlDiv.innerHTML = genNuclideInnerHTML(g_active_id);
-        setupNuclideController(g_active_id);
+        g_ctrlDiv.innerHTML = genNuclideInnerHTML(g_active_node_id);
+        setupNuclideController(g_active_node_id);
     }
 
-    g_prevActiveId = g_active_id;
+    g_prevActiveId = g_active_node_id;
 }
 
 function funChangeNuclideAttribute(nuclide, inp_name, inp_halfLife, inp_initialCount){
