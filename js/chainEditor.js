@@ -132,9 +132,7 @@ class Node {
     }
 
     doDrag(mousePos) {
-        if (this.isDragged) {
-            this.pos = v2add(mousePos, this.clickOffset);
-        }
+        if (this.isDragged) this.pos = v2add(mousePos, this.clickOffset);
     }
 
     checkHover(mouse){
@@ -144,24 +142,43 @@ class Node {
     }
 }
 
-
 /*
- * assuming parentNode already exist in nodes
- * childNode will be added into nodes afterward
+ * New detached node
  */
+function newBlankNode(posx = 100, posy = 100){
+    var newNode = new Node(posx,posy, new Nuclide("X"));
+    g_nodes.push(newNode);
+    return newNode;
+}
+
 function setChild(parentNode, childNode){
-    g_nodes.push(childNode);
-    parentNode.nuclide.halfLife = 1.0;
     var mode = new ParentMode(parentNode.nuclide, parentType.decay, decayMode.alpha, 1.0);
     childNode.nuclide.addParent(mode);
+    if (parentNode.nuclide.halfLife == 0) parentNode.nuclide.halfLife = 1.0;
     g_connections.push(new Connection(parentNode, childNode, mode));
 }
 
+/*
+ * Create new child from active Node
+ */
 function newChildActive(){
     if (g_active_node_id < 0) return;
     var activeNode = g_nodes[g_active_node_id];
-    var newNode    = new Node(activeNode.pos.x + 100,activeNode.pos.y, new Nuclide("X"));
+    var newNode = newBlankNode(activeNode.pos.x + 100,activeNode.pos.y);
     setChild(activeNode, newNode);
+}
+
+var g_selectChildActive_parent_id = null;
+var g_waitForSelect = false;
+function selectChildActive(){
+    g_selectChildActive_parent_id = g_active_node_id;
+    g_waitForSelect = true;
+}
+function checkSelectChildActive(){
+    if (g_selectChildActive_parent_id != g_active_node_id){
+        setChild(g_nodes[g_selectChildActive_parent_id], g_nodes[g_active_node_id]);
+        g_waitForSelect = false;
+    }
 }
 
 var g_active_node_id  = -1;
@@ -169,11 +186,13 @@ var g_active_conn_id  = -1;
 var g_isDragging = false;
 
 var nuclide0 = new Nuclide("A", 100);
+var nuclide1 = new Nuclide("B");
+
 var g_nodes = [new Node(150,150,nuclide0)];
 var g_connections = [];
 
-var nuclide1 = new Nuclide("B");
-setChild(g_nodes[0], new Node(300,100,nuclide1));
+g_nodes.push(new Node(300,100,nuclide1));
+setChild(g_nodes[0], g_nodes[1]);
 
 
 function chainEditor_update(params){
@@ -184,6 +203,9 @@ function chainEditor_update(params){
     for (var i in g_nodes){ g_nodes[i].nuclide.nodeId = i; }
     for (var i in g_nodes){ g_nodes[i].update(params, i); }
     for (var i in g_connections){ g_connections[i].update(params, i); }
+    if (g_waitForSelect) checkSelectChildActive();
 }
 
-document.getElementById("addChildButton").onclick = newChildActive;
+document.getElementById("newChildButton").onclick = newChildActive;
+document.getElementById("setChildButton").onclick = selectChildActive;
+document.getElementById("newNodeButton").onclick  = () => { newBlankNode(); };
