@@ -41,8 +41,10 @@ function drawArrow(ctx, fromx, fromy, tox, toy, arrowWidth, color){
  */
 function linmap(x, a,b, A,B){ return A + ((x-a) * (B-A)/(b-a)); }
 
+function V2(x,y){ return {x:x, y:y}; }
 function v2add(a,b){ return { x : a.x + b.x, y : a.y + b.y, }; }
 function v2sub(a,b){ return { x : a.x - b.x, y : a.y - b.y, }; }
+function v2mul(a,b){ return { x : a.x * b.x, y : a.y * b.y, }; }
 function v2scale(v,s){ return { x : s * v.x, y : s * v.y, }; }
 
 function v2len2(v){ return v.x*v.x + v.y*v.y; }

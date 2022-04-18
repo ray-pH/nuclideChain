@@ -3,6 +3,7 @@ class Connection {
         this.parentNode = parentNode;
         this.childNode = childNode;
         this.parentMode = parentMode;
+        this.size = V2(0,0);
     }
 
     update(params, id){
@@ -12,6 +13,7 @@ class Connection {
     display(params, id) {
         var ctx = params.ctx;
         this.displayArrows(ctx, id);
+        this.displayText(ctx, id);
     }
 
     displayArrows(ctx, id){
@@ -23,12 +25,33 @@ class Connection {
         var posA      = v2add(pare.pos , displace);
         var posB      = v2sub(child.pos, displace);
         drawArrow(ctx, posA.x, posA.y, posB.x, posB.y, 2, "#ffffff");
+    }
+
+    displayText(ctx, id){
+        const text_dy  = 14;
+        const text_pad = 5;
+        var child     = this.childNode;
+        var pare      = this.parentNode;
+        var direction = v2sub(child.pos, pare.pos);
+        var posText   = v2add(pare.pos, v2scale(direction, 0.5));
+        var padSize   = V2(text_pad, text_pad)
 
         var textLabel = this.getTransLabel();
-        var posText   = v2add(pare.pos, v2scale(direction, 0.5));
+        ctx.textBaseline = "middle";
         ctx.font = "10px Arial";
+        var textSize  = V2(ctx.measureText(textLabel).width, 10)
+        this.size     = v2add(textSize, v2scale(padSize,2));
+        var halfsize  = v2scale(this.size, 0.5);
+        var cornerPos = v2add(v2sub(posText, halfsize) , V2(0, -text_dy));
+
+        // background
+        ctx.fillStyle   = "#333333cc";
+        // ctx.fillStyle   = "#ff3333";
+        ctx.fillRect(cornerPos.x, cornerPos.y, this.size.x, this.size.y);
+
         ctx.fillStyle   = "#ffffff";
-        ctx.fillText(textLabel, posText.x, posText.y - 10);
+        ctx.fillText(textLabel, posText.x, posText.y - text_dy);
+
     }
 
     getTransLabel(){
@@ -76,9 +99,10 @@ class Node {
 
         ctx.textAlign = "center";
         ctx.lineWidth   = 2;
+        ctx.textBaseline = "middle";
         ctx.font = "20px Arial";
         ctx.fillStyle   = "#0e0e0e";
-        ctx.fillText(this.nuclide.name, this.pos.x, this.pos.y + 8);
+        ctx.fillText(this.nuclide.name, this.pos.x, this.pos.y);
     }
 
 
