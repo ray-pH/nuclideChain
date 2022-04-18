@@ -1,8 +1,8 @@
 class Connection {
-    constructor(parentNode, childNode, parentMode){
+    constructor(parentNode, childNode, mode){
         this.parentNode = parentNode;
         this.childNode = childNode;
-        this.parentMode = parentMode;
+        this.mode = mode;
         this.size = V2(0,0);
         this.pos  = V2(0,0);
     }
@@ -62,13 +62,13 @@ class Connection {
     }
 
     getTransLabel(){
-        var percentage = this.parentMode.percentage;
-        var parentMode = this.parentMode;
-        var parentNuclide = parentMode.nuclide;
+        var percentage = this.mode.percentage;
+        var mode = this.mode;
+        var parentNuclide = mode.nuclide;
         if (percentage == 1)
-            return `${parentMode.decayMode} ${parentNuclide.halfLife} ${parentNuclide.halfLifeUnit}`;
+            return `${mode.decayMode} ${parentNuclide.halfLife} ${parentNuclide.halfLifeUnit}`;
         else
-            return `${parentMode.decayMode} (${parentMode.percentage*100}%) ${parentNuclide.halfLife} ${parentNuclide.halfLifeUnit}`;
+            return `${mode.decayMode} (${mode.percentage*100}%) ${parentNuclide.halfLife} ${parentNuclide.halfLifeUnit}`;
     }
 }
 

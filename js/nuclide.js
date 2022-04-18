@@ -8,8 +8,8 @@ const timeUnit = {
 }
 
 const parentType = {
-    decay   : 0,
-    capture : 1,
+    decay   : 'decay',
+    capture : 'neutron capture',
 }
 
 const decayMode = {

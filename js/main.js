@@ -5,6 +5,7 @@ g_canvas.width = window.innerWidth - g_ctrlDiv.clientWidth - 100;
 
 var g_mousePos = {x : 0, y : 0};
 var g_mouseDown = false;
+var g_debug = null;
 
 canvas.addEventListener("mousemove", function(e) {
     g_mousePos = {
