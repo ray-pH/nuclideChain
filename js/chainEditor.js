@@ -66,10 +66,11 @@ class Connection {
         var percentage = this.mode.percentage;
         var mode = this.mode;
         var parentNuclide = mode.nuclide;
-        if (percentage == 1)
-            return `${mode.decayMode} ${parentNuclide.halfLife} ${parentNuclide.halfLifeUnit}`;
-        else
-            return `${mode.decayMode} (${mode.percentage*100}%) ${parentNuclide.halfLife} ${parentNuclide.halfLifeUnit}`;
+        var percentageStr = (percentage == 1) ? " " : ` (${mode.percentage*100}%) `
+        if (mode.transType == transType.decay)
+            return `${mode.decayMode}${percentageStr}${parentNuclide.halfLife} ${parentNuclide.halfLifeUnit}`;
+        else if (mode.transType == transType.capture)
+            return `(n,γ)${percentageStr}${mode.crossSect} b`;
     }
 }
 
@@ -159,7 +160,7 @@ function newBlankNode(posx = 100, posy = 100){
 }
 
 function setChild(parentNode, childNode){
-    var mode = new ParentMode(parentNode.nuclide, parentType.decay, decayMode.alpha, 1.0);
+    var mode = new transMode(parentNode.nuclide, transType.decay, decayMode.alpha, 0, 1.0);
     childNode.nuclide.addParent(mode);
     if (parentNode.nuclide.halfLife == 0) parentNode.nuclide.halfLife = 1.0;
     g_connections.push(new Connection(parentNode, childNode, mode));

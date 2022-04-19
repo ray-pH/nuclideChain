@@ -31,10 +31,11 @@ function funChangeNuclideAttribute(nuclide, inp_name, inp_halfLife, inp_halfLife
     }
 }
 
-function funChangeConnectionAttribute(mode, inp_type, inp_decayMode, inp_percentage){
+function funChangeConnectionAttribute(mode, inp_type, inp_decayMode, inp_crossSect, inp_percentage){
     return function() {
-        mode.parentType = inp_type.value;
+        mode.transType  = inp_type.value;
         mode.decayMode  = inp_decayMode.value;
+        mode.crossSect  = Number(inp_crossSect.value);
         mode.percentage = Number(inp_percentage.value);
     }
 }
@@ -71,13 +72,15 @@ function setupConnectionController(id){
     var mode           = g_connections[id].mode;
     var inp_type       = document.getElementById('inp_type');
     var inp_decayMode  = document.getElementById('inp_decayMode');
+    var inp_crossSect  = document.getElementById('inp_crossSect');
     var inp_percentage = document.getElementById('inp_percentage');
 
-    inp_type.value       = mode.parentType;
+    inp_type.value       = mode.transType;
     inp_decayMode.value  = mode.decayMode;
+    inp_crossSect.value  = mode.crossSect;
     inp_percentage.value = mode.percentage;
 
-    var inps = [inp_type, inp_decayMode, inp_percentage];
+    var inps = [inp_type, inp_decayMode, inp_crossSect, inp_percentage];
     inps.forEach((inp) => {
         inp.addEventListener('change', funChangeConnectionAttribute(mode, ...inps))});
 
@@ -125,8 +128,8 @@ function genConnectionInnerHTML(){
     return `
     type :
     <select name="type" id="inp_type">
-        <option value="${parentType.decay}">  ${parentType.decay}  </option>
-        <option value="${parentType.capture}">${parentType.capture}</option>
+        <option value="${transType.decay}">  ${transType.decay}  </option>
+        <option value="${transType.capture}">${transType.capture}</option>
     </select><br>
     decayMode :
     <select name="decayMode" id="inp_decayMode">
@@ -139,6 +142,8 @@ function genConnectionInnerHTML(){
         <option value="${decayMode.EC}">${decayMode.EC} (electron capture)</option>
         <option value="${decayMode.SF}">${decayMode.SF} (self fission)</option>
     </select><br>
+    crossSect :
+    <input id="inp_crossSect" value=""> barn<br>
     percentage :
     <input id="inp_percentage" value="-1"><br>
     <button id="btn_delete">deleteConnection</button>
