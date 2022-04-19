@@ -12,14 +12,15 @@ class Plot {
 
 constructor(canvas, legendCanvas, pad){
     this.canvas = canvas;
-    this.ctx = this.canvas.getContext("2d");
     this.legendCanvas = legendCanvas;
+    this.ctx = this.canvas.getContext("2d");
     this.legendctx = this.legendCanvas.getContext("2d");
     this.pad = pad;
     this.colorscheme = hsvcolors;
 }
 
-plotClear(){ this.ctx.clearRect(0, 0, plot_canvas.width, plot_canvas.height); }
+plotClear()  { this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); }
+legendClear(){ this.legendctx.clearRect(0, 0, this.legendCanvas.width, this.legendCanvas.height); }
 getPlotArea(){
     var plot_origin   = V2(this.pad, this.pad);
     var plot_size     = V2(plot_canvas.width - 2*this.pad, plot_canvas.height - 2*this.pad);
@@ -111,6 +112,7 @@ plotN(X, Ys, xrange=null, yrange=null){
 }
 
 displayLegend(names){
+    this.legendClear();
     const ctx = this.legendctx;
     const dy = 10;
     const dx = 10;
