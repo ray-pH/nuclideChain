@@ -44,6 +44,7 @@ function gen_diff_equation_function(nodes){
     };
 }
 
+var g_neutronFlux = 0;
 var g_dt = 0.1;
 var g_t0 = 0;
 var g_tend = 10;

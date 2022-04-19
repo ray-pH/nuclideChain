@@ -14,7 +14,8 @@ function updateController(){
         setupConnectionController(g_active_conn_id);
     }
     else{
-        g_ctrlDiv.innerHTML = "-1";
+        g_ctrlDiv.innerHTML = genGlobalInnerHTML();
+        setupGlobalController();
     }
 
     g_prevActiveNodeId = g_active_node_id;
@@ -35,6 +36,12 @@ function funChangeConnectionAttribute(mode, inp_type, inp_decayMode, inp_percent
         mode.parentType = inp_type.value;
         mode.decayMode  = inp_decayMode.value;
         mode.percentage = Number(inp_percentage.value);
+    }
+}
+
+function funChangeGlobalAttribute(inp_neutronFlux){
+    return function() {
+        g_neutronFlux = Number(inp_neutronFlux.value);
     }
 }
 
@@ -76,6 +83,18 @@ function setupConnectionController(id){
 
     var btn_delete = document.getElementById('btn_delete');
     btn_delete.onclick = () => { deleteConnection(g_active_conn_id); };
+}
+
+function setupGlobalController(id){
+    var inp_neutronFlux = document.getElementById('inp_neutronFlux');
+
+    inp_neutronFlux.value = g_neutronFlux;
+
+    var inps = [inp_neutronFlux];
+    inps.forEach((inp) => {
+        inp.addEventListener('change', funChangeGlobalAttribute(...inps))});
+
+    var btn_toGraphicSetting = document.getElementById('btn_delete');
 }
 
 /*
@@ -123,5 +142,13 @@ function genConnectionInnerHTML(){
     percentage :
     <input id="inp_percentage" value="-1"><br>
     <button id="btn_delete">deleteConnection</button>
+    `;
+}
+
+function genGlobalInnerHTML(){
+    return `
+    neutronFlux :
+    <input id="inp_neutronFlux" value="-1"><br>
+    <button id="btn_toGraphicSetting">graphic setting</button>
     `;
 }
