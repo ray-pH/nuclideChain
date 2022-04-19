@@ -188,6 +188,7 @@ function checkSelectChildActive(){
     }
 }
 
+function deleteConnection(id){ g_connections.splice(id,1); }
 function deleteNode(id){
     if (id >= g_nodes.length || id < 0) return;
     // remove connection that contain deleted node
