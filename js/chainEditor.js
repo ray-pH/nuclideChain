@@ -183,7 +183,8 @@ function selectChildActive(){
 }
 function checkSelectChildActive(){
     if (g_selectChildActive_parent_id != g_active_node_id){
-        setChild(g_nodes[g_selectChildActive_parent_id], g_nodes[g_active_node_id]);
+        if (g_active_node_id != -1)
+            setChild(g_nodes[g_selectChildActive_parent_id], g_nodes[g_active_node_id]);
         g_waitForSelect = false;
     }
 }
@@ -230,8 +231,17 @@ var g_connections = [];
 g_nodes.push(new Node(300,100,nuclide1));
 setChild(g_nodes[0], g_nodes[1]);
 
+g_prevWaitForSelect = null;
+function manageNotice(){
+    if (g_prevWaitForSelect != g_waitForSelect){
+        if (g_waitForSelect) setNotice("click on a node that you want to be the child (click outside to cancel)");
+        else setNotice("no notice");
+    }
+    g_prevWaitForSelect = g_waitForSelect;
+} 
 
 function chainEditor_update(params){
+    manageNotice();
     if (params.mouseDown) {
         g_active_node_id = -1;
         g_active_conn_id = -1;

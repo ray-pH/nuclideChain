@@ -1,5 +1,6 @@
-var g_canvas  = document.getElementById("canvas");
-var g_ctrlDiv = document.getElementById("controller");
+var g_canvas    = document.getElementById("canvas");
+var g_ctrlDiv   = document.getElementById("div_controller");
+var g_noticeDiv = document.getElementById("div_notice");
 var g_ctx = canvas.getContext("2d");
 g_canvas.width = window.innerWidth - g_ctrlDiv.clientWidth - 100;
 
@@ -23,6 +24,10 @@ function setMouseState(e) {
 g_canvas.addEventListener("mousedown", setMouseState);
 g_canvas.addEventListener("mousemove", setMouseState);
 g_canvas.addEventListener("mouseup", setMouseState);
+
+function setNotice(message, imp=0){
+    g_noticeDiv.innerHTML = message;
+}
 
 function loop() {
     g_ctx.fillStyle = "#0e0e0e";
