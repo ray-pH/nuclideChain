@@ -55,6 +55,9 @@ function solve(){
     var T = result.T;
     var N = m_transpose(result.Y);
     g_Plotter.plotN(T,N);
+
+    var nuclideNames = g_nodes.map((node) => { return node.nuclide.name; });
+    g_Plotter.displayLegend(nuclideNames);
     // plot(result.T, m_transpose(result.Y)[0], null, null, true);
     // plot(result.T, m_transpose(result.Y)[1]);
 }

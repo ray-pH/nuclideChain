@@ -6,9 +6,9 @@ g_canvas.width = window.innerWidth - g_ctrlDiv.clientWidth - 100;
 
 // TODO proper object
 var plot_canvas = document.getElementById("plotCanvas");
-var plot_ctx = plot_canvas.getContext("2d");
+var plot_legend_canvas = document.getElementById("legendCanvas");
 var plot_pad = 50;
-var g_Plotter = new Plot(plot_canvas, plot_ctx, plot_pad);
+var g_Plotter = new Plot(plot_canvas, plot_legend_canvas, plot_pad);
 
 var g_mousePos = {x : 0, y : 0};
 var g_mouseDown = false;

@@ -10,10 +10,13 @@ const hsvcolors = [
 
 class Plot {
 
-constructor(canvas, context, pad){
+constructor(canvas, legendCanvas, pad){
     this.canvas = canvas;
-    this.ctx = context;
+    this.ctx = this.canvas.getContext("2d");
+    this.legendCanvas = legendCanvas;
+    this.legendctx = this.legendCanvas.getContext("2d");
     this.pad = pad;
+    this.colorscheme = hsvcolors;
 }
 
 plotClear(){ this.ctx.clearRect(0, 0, plot_canvas.width, plot_canvas.height); }
@@ -33,13 +36,11 @@ drawAxes(xrange, yrange, xtickstep = null, ytickstep = null){
     if (ytickstep == null) ytickstep = Math.round(( yrange.max - yrange.min)/optimal_nticks );
 
     var xticks = [xrange.min]
-    while (xticks[xticks.length-1] + xtickstep <= xrange.max)
-        xticks.push(xticks[xticks.length-1] + xtickstep);
     var yticks = [yrange.min]
-    while (yticks[yticks.length-1] + ytickstep <= yrange.max)
-        yticks.push(yticks[yticks.length-1] + ytickstep);
+    while (xticks[xticks.length-1] + xtickstep <= xrange.max) xticks.push(xticks[xticks.length-1] + xtickstep);
+    while (yticks[yticks.length-1] + ytickstep <= yrange.max) yticks.push(yticks[yticks.length-1] + ytickstep);
 
-    var ctx = this.ctx;
+    const ctx = this.ctx;
     var [plot_origin, plot_size, plot_opposite] = this.getPlotArea();
 
     ctx.strokeStyle = '#222222';
@@ -48,9 +49,9 @@ drawAxes(xrange, yrange, xtickstep = null, ytickstep = null){
 
     var din  = 0;
     var dout = 5;
+    var dticktext = 4;
     ctx.strokeStyle = '#222222';
     ctx.fillStyle   = '#222222';
-    var dticktext = 4;
     ctx.lineWidth = 1;
     ctx.font = "10px Arial";
 
@@ -77,6 +78,7 @@ drawAxes(xrange, yrange, xtickstep = null, ytickstep = null){
 }
 
 plot(X,Y, color='black', xrange=null, yrange=null, clear=false){
+    const ctx = this.ctx;
     if (clear) this.plotClear();
     if (xrange == null) xrange = { min : Math.min(...X), max : Math.max(...X), };
     if (yrange == null) yrange = { min : Math.min(...Y), max : Math.max(...Y), };
@@ -90,12 +92,12 @@ plot(X,Y, color='black', xrange=null, yrange=null, clear=false){
     var Xscaled = X.map((x) => { return linmap(x, xrange.min, xrange.max, origin.x, opposite.x); });
     var Yscaled = Y.map((y) => { return linmap(y, yrange.min, yrange.max, opposite.y, origin.y); });
 
-    this.ctx.strokeStyle = color;
-    this.ctx.lineWidth = 2;
-    this.ctx.beginPath();
-    this.ctx.moveTo(Xscaled[0], Yscaled[0]);
-    for (var i = 1; i < n; i++) this.ctx.lineTo(Xscaled[i], Yscaled[i]);
-    this.ctx.stroke();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(Xscaled[0], Yscaled[0]);
+    for (var i = 1; i < n; i++) ctx.lineTo(Xscaled[i], Yscaled[i]);
+    ctx.stroke();
 
 }
 
@@ -104,8 +106,32 @@ plotN(X, Ys, xrange=null, yrange=null){
     if (yrange == null) yrange = { min : Math.min(...Ys.flat()), max : Math.max(...Ys.flat()), };
     this.plotClear();
     for (var i = 0; i < Ys.length; i++) 
-        this.plot(X,Ys[i], hsvcolors[i % hsvcolors.length], xrange, yrange);
+        this.plot(X,Ys[i], this.colorscheme[i % this.colorscheme.length], xrange, yrange);
     this.drawAxes(xrange, yrange);
+}
+
+displayLegend(names){
+    const ctx = this.legendctx;
+    const dy = 10;
+    const dx = 10;
+    const linelen = 40;
+    const origin = V2(0, this.pad);
+
+    ctx.textBaseline = 'middle';
+    ctx.textAlign    = 'left';
+    for (var i in names){
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = this.colorscheme[i % this.colorscheme.length];
+        ctx.beginPath();
+        ctx.moveTo(origin.x, origin.y + i*dy);
+        ctx.lineTo(origin.x + linelen, origin.y + i*dy);
+        ctx.stroke();
+
+        ctx.fillStyle   = '#222222';
+        ctx.lineWidth = 1;
+        ctx.font = "10px Arial";
+        ctx.fillText(names[i], origin.x + linelen + dx, origin.y + i*dy);
+    }
 }
 
 }
