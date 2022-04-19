@@ -5,11 +5,12 @@ class Connection {
         this.mode = mode;
         this.size = V2(0,0);
         this.pos  = V2(0,0);
+        this.id   = -1;
     }
 
     update(params, id){
-        this.display(params, id);
         this.checkHover(params, id);
+        this.display(params, id);
     }
 
     checkHover(params, id){
@@ -91,6 +92,12 @@ class Node {
         this.doDrag(params.mousePos);
         this.display(params, id);
     }
+
+    updateId(id){
+        this.id = id;
+        this.nuclide.nodeId = id;
+    }
+
 
     display(params, id) {
         var ctx = params.ctx;
@@ -181,6 +188,30 @@ function checkSelectChildActive(){
     }
 }
 
+function deleteNode(id){
+    if (id >= g_nodes.length || id < 0) return;
+    // remove connection that contain deleted node
+    for (var i in g_connections){
+        if (g_connections[i].parentNode.id == id || g_connections[i].childNode.id == id){
+            g_connections[i] = null;
+        }
+    }
+    g_connections = g_connections.filter( (x) => {return x != null;} );
+    // remove node.nuclide from all nulcide.parentModes
+    for (var i in g_nodes){
+        var nuclide = g_nodes[i].nuclide;
+        for (var j in nuclide.parentModes){
+            var mode = nuclide.parentModes[j];
+            if (mode.nuclide.nodeId == id) nuclide.parentModes[j] = null;
+        }
+        nuclide.parentModes = nuclide.parentModes.filter( (x) => {return x != null;} );
+    }
+    // remove node from g_nodes
+    g_nodes.splice(id,1);
+    // update nuclide.nodeId
+    for (var i in g_nodes){ g_nodes[i].updateId(i); }
+}
+
 var g_active_node_id  = -1;
 var g_active_conn_id  = -1;
 var g_isDragging = false;
@@ -200,7 +231,7 @@ function chainEditor_update(params){
         g_active_node_id = -1;
         g_active_conn_id = -1;
     }
-    for (var i in g_nodes){ g_nodes[i].nuclide.nodeId = i; }
+    for (var i in g_nodes){ g_nodes[i].updateId(i); }
     for (var i in g_nodes){ g_nodes[i].update(params, i); }
     for (var i in g_connections){ g_connections[i].update(params, i); }
     if (g_waitForSelect) checkSelectChildActive();
