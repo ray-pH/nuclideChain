@@ -54,7 +54,7 @@ function solve(){
     var result = Solver.euler(fun, g_t0, g_tend, N0, g_dt);
     var T = result.T;
     var N = m_transpose(result.Y);
-    plotN(T,N);
+    g_Plotter.plotN(T,N);
     // plot(result.T, m_transpose(result.Y)[0], null, null, true);
     // plot(result.T, m_transpose(result.Y)[1]);
 }
