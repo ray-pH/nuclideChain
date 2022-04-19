@@ -5,11 +5,11 @@ function updateController(){
     var idChanged = (g_active_node_id != g_prevActiveNodeId) || (g_active_conn_id != g_prevActiveConnId)
     if (!idChanged) return;
     // id changed
-    if (g_active_node_id >= 0) {
+    if (g_active_node_id >= 0 && g_active_node_id < g_nodes.length) {
         g_ctrlDiv.innerHTML = genNuclideInnerHTML(g_active_node_id);
         setupNuclideController(g_active_node_id);
     }
-    else if (g_active_conn_id >= 0) {
+    else if (g_active_conn_id >= 0 && g_active_conn_id < g_connections.length) {
         g_ctrlDiv.innerHTML = genConnectionInnerHTML();
         setupConnectionController(g_active_conn_id);
     }
@@ -55,6 +55,9 @@ function setupNuclideController(id){
     var inps = [inp_name, inp_halfLife, inp_halfLifeUnit, inp_initialCount];
     inps.forEach((inp) => {
         inp.addEventListener('change', funChangeNuclideAttribute(nuclide, ...inps))});
+
+    var btn_delete = document.getElementById('btn_delete');
+    btn_delete.onclick = () => { deleteNode(g_active_node_id); };
 }
 
 function setupConnectionController(id){
@@ -70,6 +73,9 @@ function setupConnectionController(id){
     var inps = [inp_type, inp_decayMode, inp_percentage];
     inps.forEach((inp) => {
         inp.addEventListener('change', funChangeConnectionAttribute(mode, ...inps))});
+
+    var btn_delete = document.getElementById('btn_delete');
+    btn_delete.onclick = () => { deleteConnection(g_active_conn_id); };
 }
 
 /*
@@ -92,6 +98,7 @@ function genNuclideInnerHTML(id){
     </select><br>
     initialCount:
     <input id="inp_initialCount" value="-1"><br>
+    <button id="btn_delete">deleteNode</button>
     `;
 }
 
@@ -115,5 +122,6 @@ function genConnectionInnerHTML(){
     </select><br>
     percentage :
     <input id="inp_percentage" value="-1"><br>
+    <button id="btn_delete">deleteConnection</button>
     `;
 }

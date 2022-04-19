@@ -188,7 +188,10 @@ function checkSelectChildActive(){
     }
 }
 
-function deleteConnection(id){ g_connections.splice(id,1); }
+function deleteConnection(id){ 
+    g_connections.splice(id,1); 
+    g_active_conn_id = -1;
+}
 function deleteNode(id){
     if (id >= g_nodes.length || id < 0) return;
     // remove connection that contain deleted node
@@ -211,6 +214,7 @@ function deleteNode(id){
     g_nodes.splice(id,1);
     // update nuclide.nodeId
     for (var i in g_nodes){ g_nodes[i].updateId(i); }
+    g_active_node_id = -1;
 }
 
 var g_active_node_id  = -1;
