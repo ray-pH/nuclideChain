@@ -1,6 +1,7 @@
 var g_canvas    = document.getElementById("canvas");
 var g_ctrlDiv   = document.getElementById("div_controller");
 var g_noticeDiv = document.getElementById("div_notice");
+var g_warnDiv   = document.getElementById("div_warn");
 var g_ctx = canvas.getContext("2d");
 g_canvas.width = window.innerWidth - g_ctrlDiv.clientWidth - 100;
 

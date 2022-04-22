@@ -37,6 +37,12 @@ function drawArrow(ctx, fromx, fromy, tox, toy, arrowWidth, color){
 }
 
 /*
+ * Array operations
+ */
+function unique(arr)    { return arr.filter((item, index) => arr.indexOf(item) == index); }
+function duplicates(arr){ return arr.filter((item, index) => arr.indexOf(item) != index); }
+
+/*
  * Map x linearly from [a,b] to [A,B]
  */
 function linmap(x, a,b, A,B){ return A + ((x-a) * (B-A)/(b-a)); }

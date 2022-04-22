@@ -57,12 +57,33 @@ function gen_diff_equation_function(nodes, conns, flux){
     };
 }
 
+function checkWarnSameName(){
+    var nuclideNames = g_nodes.map((node) => { return node.nuclide.name; });
+    var dupls        = unique(duplicates(nuclideNames));
+    console.log(nuclideNames);
+    console.log(dupls);
+    if (dupls.length <= 0) return "";
+    var str = ""
+    dupls.forEach( (dname) => {
+        str += `Nuclide name "${dname}" is not unique<br>`
+    });
+    return str;
+}
+function checkWarn(){
+    var warnStr = "";
+    warnStr += checkWarnSameName();
+    if (warnStr.length > 0)
+        g_warnDiv.innerHTML = "WARN:<br>" + warnStr;
+}
+
 var g_neutronFlux = 0;
 var g_dt = 0.1;
 var g_t0 = 0;
 var g_tend = 10;
 
 function solve(){
+    checkWarn();
+
     const fun = gen_diff_equation_function(g_nodes, g_connections, g_neutronFlux);
     var N0    = get_initial_value(g_nodes);
     var result = Solver.euler(fun, g_t0, g_tend, N0, g_dt);
